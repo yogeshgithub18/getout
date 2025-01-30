@@ -1,0 +1,144 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../../common_screens/app_text.dart';
+import '../controller/base_controller.dart';
+import 'colors.dart';
+
+class ViewImageSingle extends StatefulWidget {
+  final String images;
+  final String text;
+  const ViewImageSingle({super.key,required this.images,required this.text,});
+
+  @override
+  State<ViewImageSingle> createState() => _ViewImageSingleState();
+}
+
+class _ViewImageSingleState extends State<ViewImageSingle> {
+  BaseController controller=Get.find<BaseController>();
+  final PageController _pageController = PageController();
+  int currentPage = 0;
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _pageController.dispose();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+        children: [
+             ClipRRect(
+              borderRadius: BorderRadius.circular(1.sp),
+              child: Image.network(
+                widget.images,
+                  height:Get.height-kToolbarHeight,fit: BoxFit.cover,
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  );
+                },errorBuilder: (context,stack,child){
+                return  Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: ColoRRes.borderColor),
+                      borderRadius: BorderRadius.circular(12.sp)
+                  ),
+                  child: Image.asset(
+                    "assets/images/noImage.jpg",fit: BoxFit.cover, height: 18.h,
+                    width: 36.w,
+                  ),
+                );
+              },),
+            ),
+          Positioned(
+            top: 20,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal:15.sp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 15.sp,
+                        top: 14.sp,
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: ColoRRes.white,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(14.sp),
+                          child: const Icon(
+                            Icons.arrow_back_rounded,
+                            color: ColoRRes.textColor,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      //Get.to(()=>NotificationScreen());
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        right: 15.sp,
+                        top: 14.sp,
+                      ),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: ColoRRes.white,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(14.sp),
+                          child: SvgPicture.asset(
+                            'assets/chat/share.svg',
+                            height: 2.h,
+                            width: 2.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+           Positioned(
+                            bottom:10,
+                            child :
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width:Get.width,
+                                child: AppTexts.inter14W600(
+                                  widget.text,
+                                  fontSize:20,
+                                  textColor: ColoRRes.white,),
+                              ),
+                            )),
+         ],
+      ),),
+    );
+  }
+}
